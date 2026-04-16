@@ -115,5 +115,4 @@ def engine_v12(uid, pws, limit):
     sys.stdout.write(f'\r\r {A}[CLONING] {loop}/{limit} OK:{G}{len(oks)}{A} CP:{Y}{len(cps)}{A} '); sys.stdout.flush()
 
 if __name__ == "__main__":
-    Main
-    import
+    Main()
