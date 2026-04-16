@@ -1,0 +1,9 @@
+# SHAHIN VIP GOLD TOOL REQUIREMENTS
+# Install using: pip install -r requirements.txt
+
+requests
+beautifulsoup4
+futures
+certifi
+idna
+urllib3
